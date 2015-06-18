@@ -48,7 +48,7 @@ public class WorkFlowExecutorThread implements Runnable {
         
         
         String jobId = String.valueOf(countId);
-        workflow.callDecider(jobId);
+        workflow.callDecider(jobId + " test");
         System.exit(0);
 
 	}

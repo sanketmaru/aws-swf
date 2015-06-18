@@ -82,8 +82,16 @@ public class ActivityHost {
         ActivityOneImpl activityOneImpl = new ActivityOneImpl();
         ActivityTwoImpl activityTwoImpl = new ActivityTwoImpl();
         
-        executorForCommonTaskList = createExecutor(commonTaskList, activityOneImpl, activityTwoImpl);
-    	executorForCommonTaskList.start();
+        ActivityWorker worker = new ActivityWorker(swfService, domain, commonTaskList);
+        worker.addActivitiesImplementation(activityOneImpl);
+        worker.start();
+        
+        ActivityWorker hostActivityWorker = new ActivityWorker(swfService, domain, getHostName());
+        hostActivityWorker.addActivitiesImplementation(activityTwoImpl);
+        hostActivityWorker.start();
+        
+        /*executorForCommonTaskList = createExecutor(commonTaskList, activityOneImpl, activityTwoImpl);
+    	executorForCommonTaskList.start();*/
         System.out.println("Activity Executor Host Service Started for Task List: " + commonTaskList);
 
     }
