@@ -33,7 +33,7 @@ public class WorkflowExecutionStarter {
     public static void main(String[] args) throws Exception {
     	
     	ExecutorService executor = Executors.newFixedThreadPool(5);
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 3; i++) {
             Runnable worker = new WorkFlowExecutorThread(i);
             executor.execute(worker);
           }
