@@ -37,7 +37,8 @@ public class WorkFlowExecutorThread implements Runnable {
         
         WorkflowDeciderClientExternalFactory clientFactory = new WorkflowDeciderClientExternalFactoryImpl(swfService, domain);
         WorkflowDeciderClientExternal workflow = clientFactory.getClient(executionId);
-        
+        String taskList = configHelper.getValueFromConfig(SWFConfigKeys.WORKFLOW_WORKER_TASKLIST);
+        workflow.getSchedulingOptions().setTaskList(taskList);
         /**
          * 1. Call api to get the jobId etc
          * 2. Pass the output to the decider

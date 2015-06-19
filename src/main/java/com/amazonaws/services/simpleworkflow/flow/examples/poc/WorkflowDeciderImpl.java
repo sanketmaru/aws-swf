@@ -45,9 +45,9 @@ public class WorkflowDeciderImpl implements WorkflowDecider {
     @Override
     public void callDecider(String jobId) throws Exception {    	
     	// Settable to store the worker specific task list returned by the activity
-    	final Settable<String> taskList = new Settable<String>();
+    	//final Settable<String> taskList = new Settable<String>();
         System.out.println("job is : "+ jobId);
-
+        String workflowTaskList = workflowContext.getTaskList();
     	// replace all "/" in runId, in case system will the path as sub-folder path.
 
         //ConfigHelper configHelper = ConfigHelper.createConfig();
@@ -70,14 +70,14 @@ public class WorkflowDeciderImpl implements WorkflowDecider {
 
 
 
-            activityOne(jobId, taskList);
+            activityOne(jobId, workflowTaskList);
             //activityTwo(jobId, taskList);
 
         //}
 
     }
     
-    private void activityOne(final String jobId, Settable<String> taskList){
+    private void activityOne(final String jobId, String taskList){
     	
     	
     	new TryCatchFinally() {
@@ -85,28 +85,16 @@ public class WorkflowDeciderImpl implements WorkflowDecider {
             protected void doTry() throws Throwable {
 
                 Promise<String> A1taskOne = activityOneStore.taskOne(" Activity 1 task 1", jobId);
-                taskList.chain(A1taskOne);
-
-
-                /*if(taskList.isReady()) {
-                    ActivitySchedulingOptions options = new ActivitySchedulingOptions().withTaskList(taskList.get());
-                    activityOneStore.taskTwo(2, jobId, options);
-                    activityTwoStore.taskOne(" Activity 2 task 1", jobId, options);
-                    activityTwoStore.taskTwo(2, jobId, options);
-
-                }*/
-
-                /* if(taskList.isReady()) {
-
-                }*/
-                //Promise<String> taskTwo = activityOneStore.taskTwo(2, jobId);
-                //taskList.chain(taskTwo);
+                ActivitySchedulingOptions options = new ActivitySchedulingOptions();
+                options.setTaskList(taskList);
+                Promise<String> taskTwo = activityOneStore.taskTwo(2, jobId, options);
+                
             }
 
             @Override
             protected void doFinally() throws Throwable {
             	// check if this is needed or not, for now commenting out
-                if (taskList.isReady()) { // File was downloaded
+                /*if (taskList.isReady()) { // File was downloaded
                 	                	
                 	// Set option to schedule activity in worker specific task list
                 	//ActivitySchedulingOptions options = new ActivitySchedulingOptions().withTaskList(taskList.get());
@@ -118,7 +106,7 @@ public class WorkflowDeciderImpl implements WorkflowDecider {
                     activityOneStore.taskTwo(2, jobId, options);
                     activityTwoStore.taskOne(" Activity 2 task 1", jobId, options);
                     activityTwoStore.taskTwo(2, jobId, options);
-                }
+                }*/
             }
 
 			@Override
@@ -131,21 +119,23 @@ public class WorkflowDeciderImpl implements WorkflowDecider {
     	
     }
     
-    private void activityTwo(final String jobId, Settable<String> taskList){
+    private void activityTwo(final String jobId, String taskList){
     	
     	new TryCatchFinally() {
             @Override
             protected void doTry() throws Throwable {
-            	//Promise<String> taskOne = activityTwoStore.taskOne(" Activity 2 task 1", jobId);
+            	Promise<String> taskOne = activityTwoStore.taskOne(" Activity 2 task 1", jobId);
                 //taskList.chain(taskOne);
-                //Promise<String> taskTwo = activityTwoStore.taskTwo(2, jobId);
+            	ActivitySchedulingOptions options = new ActivitySchedulingOptions();
+                options.setTaskList(taskList);                
+                Promise<String> taskTwo = activityTwoStore.taskTwo(2, jobId, options);
                 //taskList.chain(taskTwo);
             }
 
             @Override
             protected void doFinally() throws Throwable {
             	// check if this is needed or not, for now commenting out
-                if (taskList.isReady()) { // File was downloaded
+                /*if (taskList.isReady()) { // File was downloaded
                 	                	
                 	// Set option to schedule activity in worker specific task list
                 	ActivitySchedulingOptions options = new ActivitySchedulingOptions().withTaskList(taskList.get());
@@ -154,7 +144,7 @@ public class WorkflowDeciderImpl implements WorkflowDecider {
                 	// Call deleteLocalFile activity using the host sepcific task list
                     //store.deleteLocalFile(localSourceFilename, options);
                     //store.deleteLocalFile(localTargetFilename, options);
-                }
+                }*/
             }
 
 			@Override
